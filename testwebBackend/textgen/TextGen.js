@@ -22,7 +22,6 @@ module.exports = class TextGen {
         })
         
         return true
-        //this.createMarkovChain(t)
     }
 
     makeUpper(word) {
