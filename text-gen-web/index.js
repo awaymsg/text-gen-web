@@ -3,7 +3,7 @@ const TextGen = require('./textgen/TextGen')
 const app = express()
 let textgen = new TextGen()
 
-app.use(express.static("testweb1/dist/"))
+app.use(express.static("frontend/dist/"))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
@@ -13,7 +13,7 @@ app.listen(3000, function() {
 })
 
 app.get("/", function(req, res) {
-    res.sendFile("testweb1/dist/index.html", {root: __dirname})
+    res.sendFile("frontend/dist/index.html", {root: __dirname})
 })
 
 app.get("/gen-sentence", function(req, res) {
