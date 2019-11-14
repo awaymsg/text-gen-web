@@ -1,0 +1,15 @@
+{
+  "name": "textgen-backend",
+  "version": "0.0.1",
+  "description": "backend for textgen",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kat",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "line-reader": "^0.4.0"
+  }
+}
