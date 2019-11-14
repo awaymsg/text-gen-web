@@ -24,22 +24,23 @@ export default {
     msg: String
   },
   created: function() {
-    axios.get('localhost:3000')
-    .then(function (response) {
-      // handle success
-      alert(response);
-    })
-    .catch(function (error) {
-      // handle error
-      alert(error);
-    })
-    .finally(function () {
-      // always executed
-    });
+    
   },
   methods: {
     generate: function() {
-      this.sentence = sentence
+      axios.get('localhost:3000')
+      .then(function (response) {
+        // handle success
+        this.sentence = response
+        alert(response)
+      })
+      .catch(function (error) {
+        // handle error
+        alert(error)
+      })
+      .finally(function () {
+        // always executed
+      });
     }
   }
 }

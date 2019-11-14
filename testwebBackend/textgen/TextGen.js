@@ -1,11 +1,11 @@
 const lineReader = require("line-reader")
 const fs = require("fs")
-const MarkovChain = require('./MarkovChain')
 
 module.exports = class TextGen {
     
     constructor() {
-        this.chain = new MarkovChain()
+        this.MarkovChain = require('./MarkovChain')
+        this.chain = new this.MarkovChain()
         this.sentenceCount = 2
     }
 
@@ -21,6 +21,7 @@ module.exports = class TextGen {
             }
         })
         
+        return true
         //this.createMarkovChain(t)
     }
 
@@ -51,9 +52,9 @@ module.exports = class TextGen {
             }
 
             //gets a random word from the chain in the MarkovNode
-            index = Math.floor(Math.random() * currentNode.getChain().size)
-            if (index > currentNode.getChain().size) index--
-            word = currentNode.getChain().getWord(index)
+            index = Math.floor(Math.random() * currentNode.nextWords.size)
+            if (index > currentNode.nextWords.size) index--
+            word = currentNode.nextWords.getWord(index)
             currentNode = this.chain.getNode(word)
 
             //ensure sentence is not too short
@@ -94,16 +95,16 @@ module.exports = class TextGen {
             let a = line.charAt(i)
 
             //build digits by character
-            if (!isNaN(a) || a === "$" && !lookForDigits) {
+            if (a.match("/\d/") || a === "$" && !lookForDigits) {
                 lookForDigits = true
                 digits += "" + a
                 continue
             }
-            if (!isNaN(a) || a === "$" && lookForDigits) {
+            if (a.match("/\d/") || a === "$" && lookForDigits) {
                 digits += "" + a
                 continue
             }
-            if (isNaN(a) && lookForDigits) {
+            if (!a.match("/\d/") && lookForDigits) {
                 lookForDigits = false
                 if (!this.chain.contains(digits)) {
                     this.chain.addMarkovNode(digits)
@@ -117,11 +118,11 @@ module.exports = class TextGen {
             }
 
             //build words by character
-            if (/^[a-zA-Z]/.test(a) && a != "\'" || i == line.length - 1) {
+            if (!a.match(/[a-z]/i) && a !== "\'" || i == line.length - 1) {
                 if (word != "") {
                     //add completed word
                     word = word.toLowerCase()
-                    if (word.charAt(0) == "\'" || word.charAt(0) == "\"") word = word.substring(1)
+                    if (word.charAt(0) === "\'" || word.charAt(0) === "\"") word = word.substring(1)
                     if (!this.chain.contains(word)) {
                         this.chain.addMarkovNode(word)
                     }
@@ -146,5 +147,9 @@ module.exports = class TextGen {
                 word += "" + a;
             }
         }
+
+        // let sentence = this.generateSentence()
+        // console.log(sentence)
+        // console.log(this.chain.toString())
     }
 }

@@ -1,14 +1,13 @@
-const MarkovNode = require('./MarkovNode').default
-
 module.exports = class MarkovChain {
 
     constructor() {
+        this.MarkovNode = require('./MarkovNode')
         this.head = null;
         this.size = 0;
     }
 
     addMarkovNode(s) {
-        let newNode = new MarkovNode(s);
+        let newNode = new this.MarkovNode(s);
         if (s === "." || s === "!" || s === "?") newNode.ender = true;
         if (this.head == null) this.head = newNode;
         else {
@@ -16,7 +15,6 @@ module.exports = class MarkovChain {
             this.head = newNode;
         }
         this.size++;
-        console.log(this.size)
     }
 
     isEmpty() {
@@ -32,8 +30,8 @@ module.exports = class MarkovChain {
 
     getWord(index) {
         if (index >= this.size) {
-            console.log("s: " + this.size)
             console.log(index)
+            console.log(this.size)
             throw "Index Out of Bounds"
         }
         let current = this.head;
@@ -47,11 +45,11 @@ module.exports = class MarkovChain {
         if (this.head == null) return false
         if (this.head.word === s) return true
 
-        let current = head.next
-        let previous = head
+        let current = this.head.next
+        let previous = this.head
         while (current != null) {
             if (current.word === s) {
-                moveToFront(previous, current)
+                this.moveToFront(previous, current)
                 return true
             }
             previous = current
