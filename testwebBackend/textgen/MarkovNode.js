@@ -1,6 +1,6 @@
 module.exports = class MarkovNode {
     
-    constructor(word) {
+    constructor(word, propNoun) {
         this.MarkovChain = require('./MarkovChain')
         this.word = word
         this.starter = false
@@ -9,7 +9,7 @@ module.exports = class MarkovNode {
         this.nextWords = new this.MarkovChain()
     }
 
-    addToChain(s) {
+    addToChain(s, propNoun) {
         this.nextWords.addMarkovNode(s)
     }
 

@@ -25,6 +25,13 @@ module.exports = class TextGen {
         //this.createMarkovChain(t)
     }
 
+    makeUpper(word) {
+        let temp = word.charAt(0)
+        temp = temp.toUpperCase()
+        word = temp + word.substring(1)
+        return word
+    }
+
     generateSentence() {
         let midSentence = false
         let wordCount = 0
@@ -40,16 +47,18 @@ module.exports = class TextGen {
             if (!midSentence) {
                 word = this.chain.getStarterWord()
                 currentNode = this.chain.getNode(word)
+                //make first word upper case
+                word = this.makeUpper(word)
                 sentence += word + " "
                 midSentence = true
             }
 
             //randomly change word sometimes
-            if (Math.random() * 10 < 0.1) {
-                index = Math.floor(Math.random() * this.chain.size)
-                word = this.chain.getWord(index)
-                currentNode = this.chain.getNode(word)
-            }
+            // if (Math.random() * 10 < 0.1) {
+            //     index = Math.floor(Math.random() * this.chain.size)
+            //     word = this.chain.getWord(index)
+            //     currentNode = this.chain.getNode(word)
+            // }
 
             //gets a random word from the chain in the MarkovNode
             index = Math.floor(Math.random() * currentNode.nextWords.size)
@@ -58,7 +67,7 @@ module.exports = class TextGen {
             currentNode = this.chain.getNode(word)
 
             //ensure sentence is not too short
-            while (wordCount < minWords && currentNode.ender) {
+            while (wordCount < minWords && currentNode.ender || currentNode.starter) {
                 index = Math.floor(Math.random() * this.chain.size)
                 word = this.chain.getWord(index)
                 currentNode = this.chain.getNode(word)
@@ -121,8 +130,10 @@ module.exports = class TextGen {
             if (!a.match(/[a-z]/i) && a !== "\'" || i == line.length - 1) {
                 if (word != "") {
                     //add completed word
-                    word = word.toLowerCase()
+
+                    //word = word.toLowerCase()
                     if (word.charAt(0) === "\'" || word.charAt(0) === "\"") word = word.substring(1)
+                    if (word.charAt(word.length - 1) === '\'') word = word.substring(0, word.length - 1)
                     if (!this.chain.contains(word)) {
                         this.chain.addMarkovNode(word)
                     }
@@ -131,20 +142,20 @@ module.exports = class TextGen {
                         previous.addToChain(word)
                     }
                     previous = this.chain.getNode(word)
-                    word = "";
+                    word = ""
 
                     //add special characters
                     if (a == "\"" || a == "\“" || a == "’" || a == ")" || a == "(") continue
                     if (a != " ") {
                         if (!this.chain.contains(a)) {
-                            this.chain.addMarkovNode(a);
+                            this.chain.addMarkovNode(a)
                         }
-                        previous.addToChain(a);
-                        previous = this.chain.getNode(a);
+                        previous.addToChain(a, false)
+                        previous = this.chain.getNode(a)
                     }
                 }
             } else {
-                word += "" + a;
+                word += "" + a
             }
         }
 
