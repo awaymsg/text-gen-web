@@ -45,8 +45,7 @@ app.post("/read-sentence", function(req, res) {
                     if (err) {
                         return console.log(err)
                     }
-                    console.log(location.host);
-                    res.send("18.223.33.219" + __dirname + "/speach/text.mp3")
+                    res.send(__dirname + "/speach/text.mp3")
                 })
             }
         }
