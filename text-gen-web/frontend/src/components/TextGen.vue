@@ -23,7 +23,7 @@ export default {
   name: 'TextGen',
   data () {
     return {
-      path: "",
+      audio: null,
       sentence: "",
       selected: "lotr"
     }},
@@ -62,9 +62,10 @@ export default {
       if (this.sentence === "") return
       axios.post('/read-sentence', {data: this.sentence})
       .then((response) => {
-        let audio = new Audio(response.data)
-        alert(response.data)
-        audio.play()
+        if (response.data) {
+          this.audio = new Audio('text.mp3')
+          this.audio.play()
+        }
       })
       .catch((error) => {
         // handle error

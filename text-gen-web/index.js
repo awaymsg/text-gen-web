@@ -41,11 +41,11 @@ app.post("/read-sentence", function(req, res) {
             console.log(err.code)
         } else if (data) {
             if (data.AudioStream instanceof Buffer) {
-                Fs.writeFile("./speach/text.mp3", data.AudioStream, function(err) {
+                Fs.writeFile("./frontend/dist/text.mp3", data.AudioStream, function(err) {
                     if (err) {
                         return console.log(err)
                     }
-                    res.sendFile(__dirname + "/speach/text.mp3")
+                    res.send(true)
                 })
             }
         }
