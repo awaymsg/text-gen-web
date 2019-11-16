@@ -12,7 +12,7 @@
     <p>
       {{sentence}}
     </p>
-    <button @click="read"> Read </button>
+    <button @click.prevent="read"> Read </button>
   </div>
 </template>
 
@@ -23,7 +23,6 @@ export default {
   name: 'TextGen',
   data () {
     return {
-      audio: null,
       sentence: "",
       selected: "lotr"
     }},
@@ -39,8 +38,6 @@ export default {
       .then((response) => {
         // handle success
         this.sentence = response.data
-        
-        //console.log(response)
       })
       .catch((error) => {
         // handle error
@@ -63,8 +60,9 @@ export default {
       axios.post('/read-sentence', {data: this.sentence})
       .then((response) => {
         if (response.data) {
-          this.audio = new Audio('text.mp3')
-          this.audio.play()
+          let audio = new Audio('text.mp3')
+          audio.play()
+          audio = null
         }
       })
       .catch((error) => {
