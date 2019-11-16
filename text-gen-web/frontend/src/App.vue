@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/lain.gif">
+    <img alt="lain" class="resizable" src="./assets/lain.gif">
     <TextGen msg="Text Generator"/>
   </div>
 </template>
@@ -24,6 +24,8 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+img.resizable {
   max-width: 100%;
 }
 </style>
