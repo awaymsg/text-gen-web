@@ -23,6 +23,8 @@ export default {
   name: 'TextGen',
   data () {
     return {
+      audio: null,
+      count: 0,
       sentence: "",
       selected: "lotr"
     }},
@@ -34,6 +36,7 @@ export default {
   },
   methods: {
     generate: function() {
+      if (this.audio) this.audio.pause()
       axios.get('/gen-sentence')
       .then((response) => {
         // handle success
@@ -60,9 +63,10 @@ export default {
       axios.post('/read-sentence', {data: this.sentence})
       .then((response) => {
         if (response.data) {
-          let audio = new Audio('text.mp3')
-          audio.play()
-          audio = null
+          if (this.audio) this.audio.pause()
+          this.audio = new Audio('text.mp3?' + this.count)
+          this.audio.play()
+          this.count++
         }
       })
       .catch((error) => {
