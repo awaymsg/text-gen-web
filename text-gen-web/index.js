@@ -31,8 +31,3 @@ app.post("/change-file", function(req, res) {
         textgen.read("training-files/got.txt")
     }
 })
-
-// app.post("/change-got", function(req, res) {
-//     textgen = new TextGen()
-//     textgen.read("training-files/got.txt")
-// })
