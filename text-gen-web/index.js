@@ -12,10 +12,10 @@ app.use(express.urlencoded({extended: true}))
 
 app.listen(3000, function() {
     console.log("Listening on port 3000")
-    textgen.read("training-files/lotr.txt")
 })
 
 app.get("/", function(req, res) {
+    textgen.read("training-files/lotr.txt")
     res.sendFile("frontend/dist/index.html", {root: __dirname})
 })
 
