@@ -1,5 +1,8 @@
 const express = require('express')
 const TextGen = require('./textgen/TextGen')
+const AWS = require('aws-sdk')
+const Fs = require('fs')
+
 const app = express()
 let textgen = new TextGen()
 
@@ -18,8 +21,36 @@ app.get("/", function(req, res) {
 
 app.get("/gen-sentence", function(req, res) {
     let sentence = textgen.generateSentence()
-    //console.log(sentence)
     res.send(sentence)
+})
+
+app.post("/read-sentence", function(req, res) {
+    const Polly = new AWS.Polly({
+        signatureVersion: 'v4',
+        region: 'us-east-1'
+    })
+
+    let params = {
+        Text: req.body.data,
+        OutputFormat: 'mp3',
+        VoiceId: 'Amy'
+    }
+
+    Polly.synthesizeSpeech(params, (err, data) => {
+        if (err) {
+            console.log(err.code)
+        } else if (data) {
+            if (data.AudioStream instanceof Buffer) {
+                Fs.writeFile("./speach/text.mp3", data.AudioStream, function(err) {
+                    if (err) {
+                        return console.log(err)
+                    }
+                    const path = __dirname + "speach/text.mp3"
+                    res.send(path)
+                })
+            }
+        }
+    })
 })
 
 app.post("/change-file", function(req, res) {

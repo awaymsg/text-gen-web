@@ -12,6 +12,7 @@
     <p>
       {{sentence}}
     </p>
+    <button @click="read"> Read </button>
   </div>
 </template>
 
@@ -22,9 +23,10 @@ export default {
   name: 'TextGen',
   data () {
     return {
-    sentence: "",
-    selected: "lotr"
-  }},
+      path: "",
+      sentence: "",
+      selected: "lotr"
+    }},
   props: {
     msg: String
   },
@@ -37,6 +39,7 @@ export default {
       .then((response) => {
         // handle success
         this.sentence = response.data
+        
         //console.log(response)
       })
       .catch((error) => {
@@ -54,6 +57,22 @@ export default {
       if (event.target.value === "got") {
         axios.post('/change-file', {data: "got"})
       }
+    },
+    read() {
+      if (this.sentence === "") return
+      axios.post('/read-sentence', {data: this.sentence})
+      .then((response) => {
+        let audio = new Audio(response.data)
+        alert(response.data)
+        audio.play()
+      })
+      .catch((error) => {
+        // handle error
+        alert(error)
+      })
+      .finally(() => {
+        // always executed
+      });
     }
   }
 }
