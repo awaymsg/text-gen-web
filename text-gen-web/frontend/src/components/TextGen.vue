@@ -9,10 +9,10 @@
       <br>
     </p>
     <button @click="generate"> Generate </button>
-    <p style="scoped">
-      {{sentence}}
-    </p>
     <button @click.prevent="read"> Read </button>
+    <div class="maxw"><p>
+      {{sentence}}
+    </p></div>
   </div>
 </template>
 
@@ -39,11 +39,9 @@ export default {
       if (this.audio) this.audio.pause()
       axios.get('/gen-sentence')
       .then((response) => {
-        // handle success
         this.sentence = response.data
       })
       .catch((error) => {
-        // handle error
         alert(error)
       })
       .finally(() => {
@@ -70,7 +68,6 @@ export default {
         }
       })
       .catch((error) => {
-        // handle error
         alert(error)
       })
       .finally(() => {
@@ -96,5 +93,9 @@ li {
 }
 a {
   color: #0f0f0f;
+}
+div.maxw {
+  max-width:500px;
+  margin: auto;
 }
 </style>
