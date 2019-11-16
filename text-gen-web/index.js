@@ -45,7 +45,7 @@ app.post("/read-sentence", function(req, res) {
                     if (err) {
                         return console.log(err)
                     }
-                    res.send("127.0.0.1" + __dirname + "/speach/text.mp3")
+                    res.send("127.0.0.1:80" + __dirname + "/speach/text.mp3")
                 })
             }
         }
