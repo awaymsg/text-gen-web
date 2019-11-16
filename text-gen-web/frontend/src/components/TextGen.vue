@@ -9,7 +9,7 @@
       <br>
     </p>
     <button @click="generate"> Generate </button>
-    <p>
+    <p style="scoped">
       {{sentence}}
     </p>
     <button @click.prevent="read"> Read </button>

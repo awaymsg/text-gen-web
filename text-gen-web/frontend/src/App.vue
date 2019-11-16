@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/lain.gif">
-    <TextGen msg="Simple Text Generator"/>
+    <TextGen msg="Text Generator"/>
   </div>
 </template>
 
