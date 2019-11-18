@@ -38,6 +38,7 @@ module.exports = class TextGen {
         let sentence = ""
         let word = ""
         let currentNode = null
+        let previousNode = null
 
         while (true) {
             let index = 0
@@ -53,24 +54,44 @@ module.exports = class TextGen {
             }
 
             //randomly change word sometimes
-            // if (Math.random() * 10 < 0.1) {
-            //     index = Math.floor(Math.random() * this.chain.size)
-            //     word = this.chain.getWord(index)
-            //     currentNode = this.chain.getNode(word)
-            // }
-
-            //gets a random word from the chain in the MarkovNode
-            index = Math.floor(Math.random() * currentNode.nextWords.size)
-            if (index > currentNode.nextWords.size) index--
-            word = currentNode.nextWords.getWord(index)
-            currentNode = this.chain.getNode(word)
-
-            //ensure sentence is not too short
-            while (wordCount < minWords && currentNode.ender || currentNode.starter) {
-                index = Math.floor(Math.random() * this.chain.size)
-                word = this.chain.getWord(index)
+            if (Math.random() * 10 < 0.1) {
+                index = Math.floor(Math.random() * currentNode.nextWords.size)
+                word = currentNode.nextWords.getWord(index)
                 currentNode = this.chain.getNode(word)
             }
+
+            //gets a random word from the chain in the MarkovNode if previousNode is null
+            if (!previousNode) {
+                index = Math.floor(Math.random() * currentNode.nextWords.size)
+                word = currentNode.nextWords.getWord(index)
+                //console.log("current word: " + currentNode.word)
+                //console.log(currentNode.nextWords.toString())
+                previousNode = currentNode
+                currentNode = this.chain.getNode(word)
+            } else {
+                //get random word from previousNode's markov chain
+                console.log(word)
+                if (previousNode.nextWords.contains(word)) {
+                    index = Math.floor(Math.random() * previousNode.nextWords.getNode(word).nextWords.size)
+                    word = previousNode.nextWords.getNode(currentNode.word).nextWords.getWord(index)
+                    previousNode = currentNode
+                    currentNode = this.chain.getNode(word)
+                } else {
+                    //in case word is not found in previousNode's markov chain
+                    console.log("did not contain ^")
+                    index = Math.floor(Math.random() * currentNode.nextWords.size)
+                    word = currentNode.nextWords.getWord(index)
+                    previousNode = currentNode
+                    currentNode = this.chain.getNode(word)
+                }
+            }
+
+            //reroll if sentence is too short
+            // if (wordCount < minWords && currentNode.ender) {
+            //     index = Math.floor(Math.random() * previousNode.size)
+            //     word = previousNode.nextWords.getWord(index)
+            //     currentNode = this.chain.getNode(word)
+            // }
 
             //special instructions for special characters
             if (word === "." || word === "!" || word === "," || word === "?" || word === ";" || word === ":") {
@@ -80,7 +101,11 @@ module.exports = class TextGen {
                 sentence += word + " "
 
                 //returns the sentence if it is ended
-                if (word !== "," && word !==";" && word !== ":") return sentence
+                if (word !== "," && word !==";" && word !== ":") {
+                    if (previousNode.word != "Mr" && previousNode.word != "Dr" && previousNode != "Ms" && previousNode != "Mrs")
+                        return sentence
+                }
+            //remove space if previous word is - or /
             } else if (word === "-" || word === "/") {
                 if (sentence.charAt(sentence.length - 1) === ' ') {
                     sentence = sentence.substring(0, sentence.length - 1)
@@ -98,6 +123,7 @@ module.exports = class TextGen {
         let digits = ""
         let lookForDigits = false
         let previous = null
+        let previous2 = null
 
         for (let i = 0; i < line.length; i++) {
             let a = line.charAt(i)
@@ -119,18 +145,20 @@ module.exports = class TextGen {
                 }
                 if (previous != null) {
                     if (previous.word === ".") this.chain.getNode(digits).starter = true
-                    previous.addToChain(digits)
+                    //add word to previous node's markov chain also
+                    if (previous2 != null) previous2.getNode(previous.word).addToChain(digits)
+                    previous2 = previous
+                    if (!previous.nextWords.contains(digits)) previous.addToChain(digits)
                 }
+                if (previous) previous2 = previous.nextWords
                 previous = this.chain.getNode(digits)
                 digits = ""
             }
 
             //build words by character
-            if (!a.match(/[a-z]/i) && a !== "\'" || i == line.length - 1) {
+            if (!a.match(/[a-zÀ-ÿ]/i) && a !== "\'" || i == line.length - 1) {
                 if (word != "") {
                     //add completed word
-
-                    //word = word.toLowerCase()
                     if (word.charAt(0) === "\'" || word.charAt(0) === "\"") word = word.substring(1)
                     if (word.charAt(word.length - 1) === '\'') word = word.substring(0, word.length - 1)
                     if (!this.chain.contains(word)) {
@@ -138,8 +166,12 @@ module.exports = class TextGen {
                     }
                     if (previous != null) {
                         if (previous.word === ".") this.chain.getNode(word).starter = true
-                        previous.addToChain(word)
+                        //add word to previous node's markov chain also
+                        if (previous2 != null) previous2.getNode(previous.word).addToChain(word)
+                        previous2 = previous
+                        if (!previous.nextWords.contains(word)) previous.addToChain(word)
                     }
+                    if (previous) previous2 = previous.nextWords
                     previous = this.chain.getNode(word)
                     word = ""
 
@@ -149,7 +181,10 @@ module.exports = class TextGen {
                         if (!this.chain.contains(a)) {
                             this.chain.addMarkovNode(a)
                         }
-                        previous.addToChain(a, false)
+                        if (!previous.nextWords.contains(a)) previous.addToChain(a)
+                        //add word to previous node's markov chain also
+                        if (previous2 != null) previous2.getNode(previous.word).addToChain(a)
+                        if (previous) previous2 = previous.nextWords
                         previous = this.chain.getNode(a)
                     }
                 }

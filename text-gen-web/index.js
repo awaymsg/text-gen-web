@@ -5,6 +5,7 @@ const Fs = require('fs')
 
 const app = express()
 let textgen = new TextGen()
+let lotr = true
 
 app.use(express.static("frontend/dist/"))
 app.use(express.json())
@@ -33,7 +34,7 @@ app.post("/read-sentence", function(req, res) {
     let params = {
         Text: req.body.data,
         OutputFormat: 'mp3',
-        VoiceId: 'Amy'
+        VoiceId: lotr ? 'Amy' : 'Amy'
     }
 
     Polly.synthesizeSpeech(params, (err, data) => {
@@ -56,8 +57,10 @@ app.post("/change-file", function(req, res) {
     textgen = new TextGen()
     if (req.body.data === "lotr") {
         textgen.read("training-files/lotr.txt")
+        lotr = true
     }
     else if (req.body.data === "got") {
         textgen.read("training-files/got.txt")
+        lotr = false
     }
 })
