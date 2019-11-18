@@ -1,4 +1,4 @@
-# testweb1
+# text-gen-web
 
 ## Project setup
 ```
