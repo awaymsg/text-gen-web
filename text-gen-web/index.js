@@ -20,6 +20,10 @@ app.get("/", function(req, res) {
     res.sendFile("frontend/dist/index.html", {root: __dirname})
 })
 
+app.get("/astar.html", function(req, res) {
+    res.sendFile("frontend/dist/astar.html", {root: __dirname})
+})
+
 app.get("/gen-sentence", function(req, res) {
     let sentence = textgen.generateSentence()
     res.send(sentence)
