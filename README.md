@@ -1,4 +1,4 @@
 # text-gen-web
-web deployed (improved) text generator
+Web deployed (improved) text generator
 
 http://katl.dog/
