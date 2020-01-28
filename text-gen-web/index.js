@@ -4,7 +4,8 @@ const AWS = require('aws-sdk')
 const Fs = require('fs')
 
 const app = express()
-let textgen = new TextGen()
+let textgenLotr = new TextGen()
+let textgenGot = new TextGen()
 let lotr = true
 
 app.use(express.static("frontend/dist/"))
@@ -12,7 +13,8 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 app.listen(3000, function() {
-    textgen.read("training-files/lotr.txt")
+    textgenLotr.read("training-files/lotr.txt")
+    textgenGot.read("training-files/got.txt")
     console.log("Listening on port 3000")
 })
 
@@ -24,8 +26,14 @@ app.get("/astar.html", function(req, res) {
     res.sendFile("frontend/dist/astar.html", {root: __dirname})
 })
 
-app.get("/gen-sentence", function(req, res) {
-    let sentence = textgen.generateSentence()
+app.post("/generate-text", function(req, res) {
+    let sentence = "";
+    if (req.body.data === "lotr") {
+        sentence = textgenLotr.generateSentence()
+    }
+    else if (req.body.data === "got") {
+        sentence = textgenGot.generateSentence()
+    }
     res.send(sentence)
 })
 
@@ -57,14 +65,14 @@ app.post("/read-sentence", function(req, res) {
     })
 })
 
-app.post("/change-file", function(req, res) {
-    textgen = new TextGen()
-    if (req.body.data === "lotr") {
-        textgen.read("training-files/lotr.txt")
-        lotr = true
-    }
-    else if (req.body.data === "got") {
-        textgen.read("training-files/got.txt")
-        lotr = false
-    }
-})
+// app.post("/change-file", function(req, res) {
+//     textgen = new TextGen()
+//     if (req.body.data === "lotr") {
+//         textgen.read("training-files/lotr.txt")
+//         lotr = true
+//     }
+//     else if (req.body.data === "got") {
+//         textgen.read("training-files/got.txt")
+//         lotr = false
+//     }
+// })

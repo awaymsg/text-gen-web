@@ -26,7 +26,8 @@ export default {
       audio: null,
       count: 0,
       sentence: "",
-      selected: "lotr"
+      selected: "lotr",
+      current: "lotr"
     }},
   props: {
     msg: String
@@ -37,7 +38,7 @@ export default {
   methods: {
     generate: function() {
       if (this.audio) this.audio.pause()
-      axios.get('/gen-sentence')
+      axios.post('/generate-text', {data: this.current})
       .then((response) => {
         this.sentence = response.data
       })
@@ -49,12 +50,7 @@ export default {
       });
     },
     onChange(event) {
-      if (event.target.value === "lotr") {
-        axios.post('/change-file', {data: "lotr"})
-      }
-      if (event.target.value === "got") {
-        axios.post('/change-file', {data: "got"})
-      }
+      this.current = event.target.value;
     },
     read() {
       if (this.sentence === "") return
