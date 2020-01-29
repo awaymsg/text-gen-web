@@ -6,7 +6,6 @@ const Fs = require('fs')
 const app = express()
 let textgenLotr = new TextGen()
 let textgenGot = new TextGen()
-let lotr = true
 
 app.use(express.static("frontend/dist/"))
 app.use(express.json())
@@ -46,7 +45,7 @@ app.post("/read-sentence", function(req, res) {
     let params = {
         Text: req.body.data,
         OutputFormat: 'mp3',
-        VoiceId: lotr ? 'Amy' : 'Amy'
+        VoiceId: 'Amy'
     }
 
     Polly.synthesizeSpeech(params, (err, data) => {
